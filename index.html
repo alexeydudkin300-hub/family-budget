@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Бюджет">
+  <meta name="theme-color" content="#fdf7fb">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Наш бюджет</title>
+</head>
+<body>
+  <section id="auth" class="screen">
+    <div class="card center">
+      <h1 class="logo">💗 Наш бюджет</h1>
+      <p class="muted">Войдите, чтобы видеть общие финансы</p>
+      <button id="loginBtn" class="btn glow">Войти через Google</button>
+    </div>
+  </section>
+
+  <section id="join" class="screen">
+    <div class="card center">
+      <h2>Семейный бюджет</h2>
+      <button id="createHouseBtn" class="btn glow">Создать новый бюджет</button>
+      <div class="divider">или</div>
+      <input id="inviteInput" class="input" placeholder="Код приглашения">
+      <button id="joinHouseBtn" class="btn ghost">Присоединиться</button>
+    </div>
+  </section>
+
+  <main id="app" class="screen">
+    <header class="topbar"><h1 id="greeting">Наш бюджет</h1></header>
+
+    <section data-view="home" class="view active">
+      <div class="seg mode-seg">
+        <button type="button" class="seg-btn active" data-mode="family">Семья</button>
+        <button type="button" class="seg-btn" data-mode="personal">Личное</button>
+      </div>
+
+      <div id="familyBlock">
+        <div class="balance-card">
+          <span>Свободно на этот месяц</span>
+          <strong id="freeMoney">0 ₽</strong>
+        </div>
+        <div class="row income-btns">
+          <button id="gotAdvance" class="btn glow small">Получил аванс</button>
+          <button id="gotSalary" class="btn glow small">Получил зарплату</button>
+        </div>
+        <div id="alerts" class="list"></div>
+        <h3>Ближайшие платежи</h3>
+        <div id="upcoming" class="list"></div>
+        <h3>Что откладывать и когда</h3>
+        <div id="paydayPlan" class="list"></div>
+      </div>
+
+      <div id="personalBlock" hidden>
+        <div class="balance-card">
+          <span>Личные траты в этом месяце</span>
+          <strong id="personalMonth">0 ₽</strong>
+        </div>
+        <form id="personalForm" class="card">
+          <input id="pAmount" class="input" type="number" inputmode="decimal" placeholder="Сумма" required>
+          <input id="pCategory" class="input" placeholder="Категория">
+          <input id="pNote" class="input" placeholder="Комментарий">
+          <label class="row"><input id="pShare" type="checkbox"> Показать в общем бюджете</label>
+          <button class="btn glow">Добавить личную трату</button>
+        </form>
+        <h3>Мои личные траты</h3>
+        <div id="personalList" class="list"></div>
+      </div>
+    </section>
+
+    <section data-view="money" class="view">
+      <form id="txForm" class="card">
+        <div class="seg">
+          <button type="button" class="seg-btn active" data-type="expense">Расход</button>
+          <button type="button" class="seg-btn" data-type="income">Доход</button>
+        </div>
+        <input id="txAmount" class="input" type="number" inputmode="decimal" placeholder="Сумма" required>
+        <input id="txCategory" class="input" placeholder="Категория">
+        <input id="txNote" class="input" placeholder="Комментарий">
+        <button class="btn glow">Добавить</button>
+      </form>
+      <h3>Повторяющиеся</h3>
+      <div id="recurList" class="list"></div>
+      <h3>Операции</h3>
+      <div id="txList" class="list"></div>
+    </section>
+
+    <section data-view="bills" class="view">
+      <form id="billForm" class="card">
+        <input id="billTitle" class="input" placeholder="Платёж, например ипотека" required>
+        <div class="row">
+          <input id="billAmount" class="input" type="number" placeholder="Сумма" required>
+          <input id="billDay" class="input" type="number" min="1" max="31" placeholder="День" required>
+        </div>
+        <input id="billBank" class="input" placeholder="Банк, например Сбер">
+        <button class="btn glow">Добавить платёж</button>
+      </form>
+      <div id="billList" class="list"></div>
+    </section>
+
+    <section data-view="envelopes" class="view">
+      <form id="envForm" class="card">
+        <input id="envName" class="input" placeholder="Название конверта" required>
+        <input id="envTarget" class="input" type="number" placeholder="Цель, ₽" required>
+        <button class="btn glow">Создать конверт</button>
+      </form>
+      <div id="envList"></div>
+    </section>
+
+    <section data-view="summary" class="view">
+      <div class="card">
+        <div class="row between">
+          <button class="chip" id="prevMonth">‹ назад</button>
+          <b id="monthTitle"></b>
+          <button class="chip" id="nextMonth">вперёд ›</button>
+        </div>
+      </div>
+      <div id="summaryBody"></div>
+    </section>
+
+    <section data-view="settings" class="view">
+      <div class="card">
+        <b>Семья</b>
+        <label>Название семьи <input id="houseName" class="input" placeholder="Например: Наша семья"></label>
+        <label>Ваше имя в семье <input id="myName" class="input" placeholder="Как вас называть"></label>
+        <button id="saveNames" class="btn glow small">Сохранить имена</button>
+        <label>Участники</label>
+        <div id="memberList" class="list"></div>
+        <p class="muted">Код приглашения: <b id="inviteCode"></b> <button id="copyCode" class="chip">Скопировать</button></p>
+        <label>Войти в другую семью по коду <input id="joinCode" class="input" placeholder="Код приглашения"></label>
+        <button id="joinFromSettings" class="btn ghost small">Войти по коду</button>
+        <button id="leaveBtn" class="btn ghost small danger-chip">Покинуть семью</button>
+      </div>
+      <div class="card">
+        <label>Аванс, день месяца <input id="advanceDay" class="input" type="number" min="1" max="31"></label>
+        <label>Зарплата, день месяца <input id="salaryDay" class="input" type="number" min="1" max="31"></label>
+        <label>Основной цвет</label>
+        <div id="accentPick" class="swatches"></div>
+        <label>Второй цвет</label>
+        <div id="accent2Pick" class="swatches"></div>
+        <button id="saveSettings" class="btn glow">Сохранить</button>
+      </div>
+      <div class="card">
+        <b>Экспорт и копии</b>
+        <button id="exportCsv" class="btn ghost">Экспорт в Excel (CSV)</button>
+        <button id="backupBtn" class="btn ghost">Сохранить резервную копию</button>
+        <label>Восстановить из копии
+          <input id="restoreFile" class="input" type="file" accept="application/json">
+        </label>
+      </div>
+    </section>
+
+    <nav class="tabbar">
+      <button data-tab="home" class="active">🏠</button>
+      <button data-tab="money">💸</button>
+      <button data-tab="bills">🧾</button>
+      <button data-tab="envelopes">✉️</button>
+      <button data-tab="summary">📊</button>
+      <button data-tab="settings">⚙️</button>
+    </nav>
+
+    <div id="incomeModal" class="modal" hidden>
+      <div class="card modal-card">
+        <h2 id="incomeTitle"></h2>
+        <input id="incomeAmount" class="input" type="number" inputmode="decimal" placeholder="Сумма, которая пришла">
+        <label>Дата получения <input id="incomeDate" class="input" type="date"></label>
+        <label class="row"><input id="incomeDelayed" type="checkbox"> Получка задержана</label>
+        <div class="row">
+          <button id="incomeCancel" class="btn ghost small">Отмена</button>
+          <button id="incomeSave" class="btn glow small">Сохранить</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
