@@ -1,6 +1,7 @@
-const CACHE = "budget-v8";
+const CACHE = "budget-v9";
 const ASSETS = [
   "./",
+  "/family-budget/",
   "index.html",
   "css/style.css",
   "js/app.js",
