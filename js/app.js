@@ -1073,7 +1073,13 @@ function renderEnvs() {
         <div class="card env ${done ? "goal" : ""}" data-env="${v.id}">
           <div class="row between">
             <b>${esc(v.name)} ${done ? "🎉" : ""}</b>
-            <small>${rub(saved)} / ${rub(v.target)}</small>
+            <div class="right">
+              <small>${rub(saved)} / ${rub(v.target)}</small>
+              <button class="more" data-more="env-${v.id}">⋯</button>
+              <div class="menu" data-menu="env-${v.id}">
+                <button class="danger" data-del="${v.id}" data-coll="envelopes">Удалить конверт</button>
+              </div>
+            </div>
           </div>
           <div class="bar"><span style="width:${pct}%"></span></div>
           <div class="row">
