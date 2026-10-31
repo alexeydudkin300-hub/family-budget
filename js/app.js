@@ -669,7 +669,8 @@ function startHousehold() {
     }
     house = h;
     settings = { ...DEFAULTS, ...(h.settings || {}) };
-    $("greeting").textContent = h.name || "Наш бюджет";
+    houseTitle = h.name || "Наш бюджет";
+    setTitle(currentTab);
     $("inviteCode").textContent = h.inviteCode;
     applyTheme();
     fillSettings();
@@ -685,10 +686,29 @@ function startHousehold() {
 
 /* ---------- Навигация ---------- */
 
+const TAB_TITLES = {
+  home: null,
+  money: "Операции",
+  bills: "Платежи",
+  envelopes: "Конверты",
+  summary: "Сводка",
+  settings: "Настройки",
+};
+let houseTitle = "Наш бюджет";
+let currentTab = "home";
+
+function setTitle(tab) {
+  const t = tab === "home" ? houseTitle : (TAB_TITLES[tab] || houseTitle);
+  $("greeting").textContent = t;
+  document.title = t;
+}
+
 document.querySelectorAll(".tabbar button").forEach((b) => {
   b.onclick = () => {
+    currentTab = b.dataset.tab;
     document.querySelectorAll(".tabbar button").forEach((x) => x.classList.toggle("active", x === b));
-    document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.dataset.view === b.dataset.tab));
+    document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.dataset.view === currentTab));
+    setTitle(currentTab);
   };
 });
 
